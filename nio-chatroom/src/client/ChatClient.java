@@ -55,6 +55,7 @@ public class ChatClient {
             client.configureBlocking(false);
 
             selector = Selector.open();
+            // 监听客户端是否连接到服务器
             client.register(selector, SelectionKey.OP_CONNECT);
             client.connect(new InetSocketAddress(host, port));
 
@@ -79,7 +80,9 @@ public class ChatClient {
         // CONNECT事件 - 连接就绪事件
         if (key.isConnectable()) {
             SocketChannel client = (SocketChannel) key.channel();
+            // 证明client连接就绪
             if (client.isConnectionPending()) {
+                // 完成建立连接
                 client.finishConnect();
                 // 处理用户的输入
                 new Thread(new UserInputHandler(this)).start();
@@ -99,6 +102,11 @@ public class ChatClient {
         }
     }
 
+    /**
+     * UserInputHandler调用
+     * @param msg 输入的信息
+     * @throws IOException
+     */
     public void send(String msg) throws IOException {
         if (msg.isEmpty()) {
             return;
