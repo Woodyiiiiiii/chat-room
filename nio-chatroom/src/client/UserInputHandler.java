@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * 用户系统输入进程
+ */
 public class UserInputHandler implements Runnable {
 
     private ChatClient chatClient;
