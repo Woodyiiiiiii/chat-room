@@ -104,6 +104,7 @@ public class ChatServer {
                 // 通知selector把当前select的调用马上返回(因为可以选择阻塞)
                 selector.wakeup();
             }else {
+                System.out.println(getClientName(client) + ":" + fwdMsg);
                 // 转发给其他客户端
                 forwardMessage(client, fwdMsg);
 
@@ -178,7 +179,7 @@ public class ChatServer {
     }
 
     public static void main(String[] args) {
-        ChatServer chatServer = new ChatServer();
+        ChatServer chatServer = new ChatServer(7777);
         chatServer.start();
     }
 
