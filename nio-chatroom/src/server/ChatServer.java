@@ -82,19 +82,81 @@ public class ChatServer {
      * 处理状态分为：accept(ServerSocketChannel), read(SocketChannel)
      * @param selectionKey 状态
      */
-    public void handles(SelectionKey selectionKey) throws IOException {
+    private void handles(SelectionKey selectionKey) throws IOException {
         // ACCEPT事件——和客户端建立连接
         if (selectionKey.isAcceptable()) {
             ServerSocketChannel serverChannel = (ServerSocketChannel) selectionKey.channel();
             SocketChannel client = serverChannel.accept();
             client.configureBlocking(false);
             client.register(selector, SelectionKey.OP_READ);
-            System.out.println("客户端[" + client.socket().getPort() + "]已连接到服务器");
+            System.out.println(getClientName(client) + "已连接到服务器");
         }
         // READ事件——客户端向服务器端发送消息
         else if (selectionKey.isReadable()) {
+            // 1.读取客户端发送的消息
+            SocketChannel client = (SocketChannel) selectionKey.channel();
+            String fwdMsg = receive(client);
+            // 2. 转发给其他客户端
+            if (fwdMsg.isEmpty()) {
+                // 空消息，说明异常
+                // 停止监听
+                selectionKey.cancel();
+                // 通知selector把当前select的调用马上返回(因为可以选择阻塞)
+                selector.wakeup();
+            }else {
+                // 转发给其他客户端
+                forwardMessage(client, fwdMsg);
 
+                // 检查用户是否退出
+                if (readyToQuit(fwdMsg)) {
+                    selectionKey.cancel();
+                    selector.wakeup();
+                    System.out.println(getClientName(client) + "已断开");
+                }
+            }
         }
+    }
+
+    private String getClientName(SocketChannel socketChannel) {
+        return "客户端[" + socketChannel.socket().getPort() + "]";
+    }
+
+    /**
+     * 从客户端中获取要转发的消息
+     * @param client 客户端socketChannel
+     * @return 转发的字符串
+     */
+    private String receive(SocketChannel client) throws IOException {
+        // 把残留的消息清空
+        rBuffer.clear();
+        // 只要rBuffer能从client中读出数据
+        while (client.read(rBuffer) > 0);
+        // 将Buffer的写模式转换成读模式
+        rBuffer.flip();
+        // 按照UTF-8的格式，将rBuffer中的数据转换成字符串
+        return String.valueOf(charset.decode(rBuffer));
+    }
+
+    /**
+     * 将当前client发送的消息fwdMsg给其他客户端
+     * @param client 消息源客户端
+     * @param fwdMsg 转发消息
+     */
+    private void forwardMessage(SocketChannel client, String fwdMsg) throws IOException {
+        for (SelectionKey key : selector.keys()) {
+            if (key.isValid() && key.channel() instanceof SocketChannel) {
+                SocketChannel connectedClient = (SocketChannel) key.channel();
+                if (!client.equals(connectedClient)) {
+                    wBuffer.clear();
+                    wBuffer.put(charset.encode(getClientName(connectedClient) + ":" + fwdMsg));
+                    wBuffer.flip();
+                    while (wBuffer.hasRemaining()) {
+                        connectedClient.write(wBuffer);
+                    }
+                }
+            }
+        }
+
     }
 
     private boolean readyToQuit(String msg) {
