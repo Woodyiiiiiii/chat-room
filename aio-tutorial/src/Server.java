@@ -13,6 +13,10 @@ public class Server {
     final int DEFAULT_PORT = 8888;
     AsynchronousServerSocketChannel serverChannel;
 
+    /**
+     * 关闭函数
+     * @param closable 一个接口，代表某个数据源或目的
+     */
     private void close(Closeable closable) {
         if (closable != null) {
             try {
@@ -44,8 +48,7 @@ public class Server {
     }
 
     private class AcceptHandler implements
-            CompletionHandler<AsynchronousSocketChannel, Object>
-    {
+            CompletionHandler<AsynchronousSocketChannel, Object> {
         @Override
         public void completed(AsynchronousSocketChannel result, Object attachment) {
             if (serverChannel.isOpen()) {
@@ -71,9 +74,12 @@ public class Server {
         }
     }
 
+    /**
+     * 内部类 ClientHandler
+     *
+     */
     private class ClientHandler implements
-            CompletionHandler<Integer, Object>
-    {
+            CompletionHandler<Integer, Object> {
         private AsynchronousSocketChannel clientChannel;
 
         public ClientHandler(AsynchronousSocketChannel channel) {
