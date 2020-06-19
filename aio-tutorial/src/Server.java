@@ -9,9 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Server {
+
     final String LOCALHOST = "localhost";
     final int DEFAULT_PORT = 8888;
     AsynchronousServerSocketChannel serverChannel;
+
 
     /**
      * 关闭函数
@@ -28,9 +30,12 @@ public class Server {
         }
     }
 
+    /**
+     * 启动函数，管理方法逻辑
+     */
     public void start() {
         try {
-            // 绑定监听端口
+            // 绑定监听端口, 跟NIO一样
             // 使用默认的AsynchronousChannelGroup
             serverChannel = AsynchronousServerSocketChannel.open();
             serverChannel.bind(new InetSocketAddress(LOCALHOST, DEFAULT_PORT));

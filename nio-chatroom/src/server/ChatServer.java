@@ -43,7 +43,7 @@ public class ChatServer {
         try {
             // 开启通道，默认阻塞
             server = ServerSocketChannel.open();
-            // 开启非阻塞
+            // 开启非阻塞——BIO没有的
             server.configureBlocking(false);
             // socket函数返回绑定的serverSocket
             // bind函数将serverSocket绑定到对应端口
@@ -59,6 +59,7 @@ public class ChatServer {
 
             while (true) {
                 // 至少有一个Channel注册的状态触发，否则阻塞
+                // 这就是和BIO不同的地方，因为非阻塞，所以可以连接多个客户端
                 selector.select();
                 // 返回所有被触发的状态的集合
                 Set<SelectionKey> selectionKeys = selector.selectedKeys();
