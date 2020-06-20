@@ -122,6 +122,7 @@ public class Server {
 
             // Map中只有两个键值对，不断地被覆写
             // 这是一个简易echo服务器，所以目的是将客户端发来的数据传回去
+            // 只需要改变buffer的状态就可以了(读换成写)
             if ("read".equals(type)) {
                 // 服务器端从客户端中读取数据，完成后改为写入状态
                 ByteBuffer buffer = (ByteBuffer) info.get("buffer");
