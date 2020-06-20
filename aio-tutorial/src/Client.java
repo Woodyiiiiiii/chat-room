@@ -29,7 +29,9 @@ public class Client {
         try {
             // 创建channel
             clientChannel = AsynchronousSocketChannel.open();
+            // 返回的Future对象保存了调用成功的信息
             Future<Void> future = clientChannel.connect(new InetSocketAddress(LOCALHOST, DEFAULT_PORT));
+            // 阻塞式调用，等待服务器端和客户端连接
             future.get();
 
             // 等待用户的输入
@@ -38,16 +40,18 @@ public class Client {
             while (true) {
                 String input = consoleReader.readLine();
 
+                // 把用户发送的字符串消息转换成字节存进buffer中
                 byte[] inputBytes = input.getBytes();
                 ByteBuffer buffer = ByteBuffer.wrap(inputBytes);
+                // 写入服务器端
                 Future<Integer> writeResult = clientChannel.write(buffer);
 
-                writeResult.get();
+                writeResult.get();         // 保证写入成功
                 buffer.flip();
-                Future<Integer> readResult = clientChannel.read(buffer);
+                Future<Integer> readResult = clientChannel.read(buffer);    // 读取数据
 
                 readResult.get();
-                String echo = new String(buffer.array());
+                String echo = new String(buffer.array());       // 字节数组转换成字符串
                 buffer.clear();
 
                 System.out.println(echo);

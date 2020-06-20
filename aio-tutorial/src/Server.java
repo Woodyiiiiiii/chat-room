@@ -36,7 +36,7 @@ public class Server {
     public void start() {
         try {
             // 绑定监听端口, 跟NIO一样
-            // 使用默认的AsynchronousChannelGroup
+            // 使用默认的AsynchronousChannelGroup，实际上从线程池中拿取了新线程
             serverChannel = AsynchronousServerSocketChannel.open();
             serverChannel.bind(new InetSocketAddress(LOCALHOST, DEFAULT_PORT));
             System.out.println("启动服务器，监听端口:" + DEFAULT_PORT);
@@ -130,7 +130,7 @@ public class Server {
                 clientChannel.write(buffer, info, this);
                 buffer.clear();
             } else if ("write".equals(type)) {
-                // 服务器向客户端中写入数据，重新调用read
+                // 服务器要求客户端中写入数据，所以创建新的buffer，重新调用read
                 ByteBuffer buffer = ByteBuffer.allocate(1024);
 
                 info.put("type", "read");
