@@ -48,12 +48,14 @@ public class ChatClient {
         try {
             // 创建channel
             clientChannel = AsynchronousSocketChannel.open();
+            // 使用Future对象获得返回connect结果，future.get()确保连接成功
             Future<Void> future = clientChannel.connect(new InetSocketAddress(host, port));
             future.get();
 
-            // 处理用户的输入
+            // 处理用户的输入，写入服务器
             new Thread(new UserInputHandler(this)).start();
 
+            // 接下来是读取服务器传来的消息，即其他用户发送的消息
             ByteBuffer buffer = ByteBuffer.allocate(BUFFER);
             while (true) {
                 Future<Integer> readResult = clientChannel.read(buffer);
@@ -82,6 +84,7 @@ public class ChatClient {
         }
 
         ByteBuffer buffer = charset.encode(msg);
+        // Integer类型的Future对象获得未来返回的结果
         Future<Integer> writeResult = clientChannel.write(buffer);
         try {
             writeResult.get();
