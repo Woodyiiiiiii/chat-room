@@ -23,6 +23,8 @@ public class ChatServer {
     private static final int BUFFER = 1024;
     private static final int THREADPOOL_SIZE = 8;
 
+    // 使用自定义的AsynchronousChannelGroup，这样就相当于
+    // 自定义了线程池，不再使用系统默认的线程池
     private AsynchronousChannelGroup channelGroup;
     private AsynchronousServerSocketChannel serverChannel;
     private List<ClientHandler> connectedClients;
@@ -54,12 +56,16 @@ public class ChatServer {
 
     private void start() {
         try {
+            // 创建固定数量的线程池
             ExecutorService executorService = Executors.newFixedThreadPool(THREADPOOL_SIZE);
+            // 将自定义的线程池传入AsynchronousChannelGroup
             channelGroup = AsynchronousChannelGroup.withThreadPool(executorService);
+            // 获得serverChannel，并绑定端口信息
             serverChannel = AsynchronousServerSocketChannel.open(channelGroup);
             serverChannel.bind(new InetSocketAddress(LOCALHOST, port));
             System.out.println("启动服务器，监听端口：" + port);
 
+            // accept异步，System.in.read()等待结果返回
             while (true) {
                 serverChannel.accept(null, new AcceptHandler());
                 System.in.read();
@@ -76,14 +82,21 @@ public class ChatServer {
         server.start();
     }
 
-
+    /**
+     * AsynchronousSocketChannel是连接后创建的
+     * attachment是Object类型
+     */
     private class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, Object> {
         @Override
         public void completed(AsynchronousSocketChannel clientChannel, Object attachment) {
+            // 因为有多个客户端，所以要继续接收连接(如果serverChannel开放)
             if (serverChannel.isOpen()) {
                 serverChannel.accept(null, this);
             }
             if (clientChannel != null && clientChannel.isOpen()) {
+                // 因为ClientHandler的read方法是异步的
+                // 所以要么用一个Future对象来获取未来返回的对象
+                // 要么实现Completion接口
                 ClientHandler handler = new ClientHandler(clientChannel);
                 ByteBuffer buffer = ByteBuffer.allocate(BUFFER);
                 // 将新用户添加到在线用户列表
