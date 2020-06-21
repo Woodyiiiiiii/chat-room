@@ -122,6 +122,11 @@ public class ChatServer {
         close(handler.clientChannel);
     }
 
+    /**
+     * Integer是返回的字节数
+     * clientChannel作为属性，这样我们就知道
+     *      ClientHandler对应哪一个AsynchronousSocketChannel
+     */
     private class ClientHandler implements CompletionHandler<Integer, Object> {
 
         private AsynchronousSocketChannel clientChannel;
@@ -130,15 +135,22 @@ public class ChatServer {
             this.clientChannel = channel;
         }
 
+        /**
+         *
+         * @param result 返回的字节数
+         * @param attachment read方法的第二个参数——buffer
+         */
         @Override
         public void completed(Integer result, Object attachment) {
             ByteBuffer buffer = (ByteBuffer) attachment;
+            // buffer为空时为写操作，否则为读操作
             if (buffer != null) {
                 if (result <= 0) {
                     // 客户端异常
                     // 将客户移除出在线客户列表
                     removeClient(this);
                 } else {
+                    // 从读取读取信息并打印和转发给其他客户
                     buffer.flip();
                     String fwdMsg = receive(buffer);
                     System.out.println(getClientName(clientChannel) + ":" + fwdMsg);
@@ -161,13 +173,20 @@ public class ChatServer {
         }
     }
 
+    /**
+     * 因为是多线程，所以加入synchronized
+     * @param clientChannel
+     * @param fwdMsg
+     */
     private synchronized void forwardMessage(AsynchronousSocketChannel clientChannel, String fwdMsg) {
         for (ClientHandler handler : connectedClients) {
             if (!clientChannel.equals(handler.clientChannel)) {
                 try {
                     ByteBuffer buffer = charset.encode(getClientName(handler.clientChannel) + ":" + fwdMsg);
+                    // 同read方法，异步调用。第二个参数attachment是null，因为不用作处理
                     handler.clientChannel.write(buffer, null, handler);
                 } catch (Exception e) {
+                    // 对每个handler异常处理，这样就能分清哪个socketChannel转发错误
                     e.printStackTrace();
                 }
             }
@@ -185,6 +204,11 @@ public class ChatServer {
         return "客户端[" + clientPort + "]";
     }
 
+    /**
+     * 将buffer按照规定格式转换成字符串(解码)
+     * @param buffer
+     * @return 字符串
+     */
     private String receive(ByteBuffer buffer) {
         CharBuffer charBuffer = charset.decode(buffer);
         return String.valueOf(charBuffer);
