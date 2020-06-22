@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /*
-类似HTTP协议的消息结构
+请求信息结构是类似HTTP协议的消息结构
 GET /index.html HTTP/1.1
         Host: localhost:8888
         Connection: keep-alive
@@ -20,6 +20,11 @@ GET /index.html HTTP/1.1
         Upgrade-Insecure-Requests: 1
         User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36
 */
+
+/*
+  该类的主要逻辑函数是parse方法
+  目的是处理并解析请求，获取URI字符串
+ */
 
 public class Request implements ServletRequest {
 
