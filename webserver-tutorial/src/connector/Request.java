@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /*
+类似HTTP协议的消息结构
 GET /index.html HTTP/1.1
         Host: localhost:8888
         Connection: keep-alive
@@ -24,6 +25,7 @@ public class Request implements ServletRequest {
 
   private static final int BUFFER_SIZE = 1024;
 
+  // 与Socket连接的InputStream
   private InputStream input;
   private String uri;
 
@@ -35,24 +37,39 @@ public class Request implements ServletRequest {
     return uri;
   }
 
+  /**
+   * 解析消息结构
+   * 获取uri，了解请求是想要什么资源
+   */
   public void parse() {
     int length = 0;
     byte[] buffer = new byte[BUFFER_SIZE];
+    // 读取InputStream的消息
+    // 将信息保存到Byte数组buffer中
+    // 返回的是信息的长度
     try {
       length = input.read(buffer);
     } catch (IOException e) {
       e.printStackTrace();
     }
 
+    // 将字节数组buffer转换成StringBuilder，再转换成String
     StringBuilder request = new StringBuilder();
-    for (int j=0; j<length; j++) {
+    for (int j = 0; j < length; ++j) {
       request.append((char)buffer[j]);
     }
     uri = parseUri(request.toString());
   }
 
+  /**
+   * 假设消息结构的uri位置是在第一个空格和第二个空格之间
+   * 根据空格的位置获取子字符串，从而获取uri
+   * @param s 请求字符串
+   * @return 获取请求资源字符串名称
+   */
   private String parseUri(String s) {
     int index1, index2;
+    // indexOf方法返回字符第一个出现在字符串中的位置
     index1 = s.indexOf(' ');
     if (index1 != -1) {
       index2 = s.indexOf(' ', index1 + 1);
@@ -60,6 +77,7 @@ public class Request implements ServletRequest {
         return s.substring(index1 + 1, index2);
       }
     }
+    // 请求结构错误，返回空串
     return "";
   }
 
