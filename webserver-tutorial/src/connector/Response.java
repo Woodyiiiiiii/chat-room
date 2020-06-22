@@ -12,7 +12,9 @@ public class Response implements ServletResponse {
 
   private static final int BUFFER_SIZE = 1024;
 
+  // 我们需要知道Response对应的Request
   Request request;
+  // 通过OutputStream来输出信息
   OutputStream output;
 
   public Response(OutputStream output) {
@@ -42,6 +44,7 @@ public class Response implements ServletResponse {
       }
     }
   }
+
 
   @Override
   public String getCharacterEncoding() {
