@@ -37,7 +37,7 @@ public class ServletProcessor {
     URLClassLoader loader = getServletLoader();
     try {
       Servlet servlet = getServlet(loader, request);
-      //
+      // facade
       RequestFacade requestFacade = new RequestFacade(request);
       ResponseFacade responseFacade = new ResponseFacade(response);
       servlet.service(requestFacade, responseFacade);
