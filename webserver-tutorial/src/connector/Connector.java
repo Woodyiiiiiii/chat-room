@@ -15,6 +15,9 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Set;
 
+/**
+ * nio改进的Connector，其实就是服务器端
+ */
 public class Connector implements Runnable {
 
   private static final int DEFAULT_PORT = 8888;

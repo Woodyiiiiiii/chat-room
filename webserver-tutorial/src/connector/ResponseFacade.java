@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
 
+/**
+ * 调用facade模式
+ */
 public class ResponseFacade implements ServletResponse {
 
   private ServletResponse response;

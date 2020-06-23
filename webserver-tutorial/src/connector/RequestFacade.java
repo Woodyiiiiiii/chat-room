@@ -10,6 +10,14 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * 模拟开发场景：
+ *  服务器开发人员不会像其他人员接触服务器代码，
+ *  或者只想其他人员调用特定的方法，比如parse方法
+ *  是不能让其他人员调用的
+ * facade模式(外观模式) [fəˈsɑːd]：
+ *  此类对应的所有方法都是其属性ServletRequest的方法
+ */
 public class RequestFacade implements ServletRequest {
 
   private ServletRequest request = null;

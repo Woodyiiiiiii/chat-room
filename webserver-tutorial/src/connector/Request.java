@@ -86,6 +86,10 @@ public class Request implements ServletRequest {
     return "";
   }
 
+  /*
+  下面都是ServletRequest需要继承的方法
+   */
+
   @Override
   public Object getAttribute(String s) {
     return null;
