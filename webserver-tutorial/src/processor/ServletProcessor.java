@@ -10,6 +10,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+/**
+ * 动态资源的Processor组件
+ */
 public class ServletProcessor {
 
   URLClassLoader getServletLoader() throws MalformedURLException {
@@ -34,6 +37,7 @@ public class ServletProcessor {
     URLClassLoader loader = getServletLoader();
     try {
       Servlet servlet = getServlet(loader, request);
+      //
       RequestFacade requestFacade = new RequestFacade(request);
       ResponseFacade responseFacade = new ResponseFacade(response);
       servlet.service(requestFacade, responseFacade);
