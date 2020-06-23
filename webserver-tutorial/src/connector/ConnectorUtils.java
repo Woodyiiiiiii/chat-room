@@ -2,6 +2,9 @@ package connector;
 
 import java.io.File;
 
+/**
+ * 存储关于connector组件的常用静态变量
+ */
 public class ConnectorUtils {
 
     public static final String WEB_ROOT =
@@ -16,7 +19,7 @@ public class ConnectorUtils {
     public static final String SPACE = " ";
 
     public static String renderStatus(HttpStatus status) {
-        StringBuilder sb = new StringBuilder(PROTOCOL)
+        StringBuilder s = new StringBuilder(PROTOCOL)
                 .append(SPACE)
                 .append(status.getStatusCode())
                 .append(SPACE)
@@ -24,7 +27,7 @@ public class ConnectorUtils {
                 .append(CARRIAGE).append(NEWLINE)
                 .append(CARRIAGE).append(NEWLINE);
 
-        return sb.toString();
+        return s.toString();
     }
 
 }
