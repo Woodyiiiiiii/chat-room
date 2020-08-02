@@ -9,13 +9,17 @@ import java.net.Socket;
  * 聊天室监听器实现
  * 用来处理用户输入的数据，每个客户端对应一个监听器
  * 读取对应的客户端Socket的消息，打印，并传给其他客户端
+ * @author woodyiiiiiii
  */
 public class ChatHandler implements Runnable {
 
     private ChatServer chatServer;
     private Socket socket;
 
-    // socket对应的是客户端口
+    /**
+     * @param chatServer 服务器端
+     * @param socket 对应的客户端接口
+     */
     public ChatHandler(ChatServer chatServer, Socket socket) {
         this.chatServer = chatServer;
         this.socket = socket;

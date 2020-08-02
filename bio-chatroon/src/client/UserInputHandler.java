@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
  * 聊天室用户输入监听器
  * 每个客户端对应一个输入监听器
  * 处理用户在控制台的输入，传给服务器
+ * @Author woodyiiiiiii
+ * @Date 2020/08/03
  */
 public class UserInputHandler implements Runnable {
 
@@ -30,8 +32,9 @@ public class UserInputHandler implements Runnable {
                 chatClient.send(input);
 
                 // 检查是否退出
-                if (chatClient.readyToQuit(input))
+                if (chatClient.readyToQuit(input)) {
                     break;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

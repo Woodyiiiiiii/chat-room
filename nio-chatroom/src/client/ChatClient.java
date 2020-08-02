@@ -11,6 +11,9 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Set;
 
+/**
+ * @author woodyiiiiiii
+ */
 public class ChatClient {
 
     private static final String DEFAULT_SERVER_HOST = "127.0.0.1";

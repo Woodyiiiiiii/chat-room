@@ -18,7 +18,11 @@ public class ChatClient {
     private BufferedReader reader;
     private BufferedWriter writer;
 
-    // 发送消息给服务器
+    /**
+     * 发送消息给服务器
+     * @param msg 字符串消息
+     * @throws IOException 异常
+     */
     public void send(String msg) throws IOException {
         if (!socket.isInputShutdown()) {
             writer.write(msg + "\n");

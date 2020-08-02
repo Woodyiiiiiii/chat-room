@@ -146,7 +146,7 @@ public class ChatServer {
 
     /**
      * 主函数启动服务器
-     * @param args
+     * @param args /
      */
     public static void main(String[] args) {
         ChatServer chatServer = new ChatServer();
